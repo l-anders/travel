@@ -8,7 +8,8 @@
         body { font-family: sans-serif; text-align: center; margin-top: 50px; }
         .page { display: none; } /* 모든 페이지 초기엔 숨김 */
         .page.active { display: block; } /* 활성 페이지는 보임 */
-        #mainImage { cursor: pointer; max-width: 80%; height: auto; }
+        /* #mainImage { cursor: pointer; max-width: 80%; height: auto; } 이 부분은 필요 없어져요 */
+        #startButton { padding: 15px 30px; font-size: 1.2em; cursor: pointer; margin-top: 50px; } /* 버튼 스타일 추가 */
         #seoulMap { cursor: pointer; max-width: 90%; }
         button { padding: 10px 20px; margin: 5px; cursor: pointer; }
         #chatBotContainer { text-align: left; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
@@ -22,14 +23,16 @@
 <body>
 
     <div id="page1" class="page active">
-        <img id="mainImage" src="your_image_path.jpg" alt="여행 시작 이미지">
-        <p>이미지를 클릭하면 여행 계획을 시작합니다!</p>
+        <h2>여행 계획을 시작하시겠습니까?</h2>
+        <button id="startButton">여행 시작하기</button>
     </div>
 
     <div id="page2" class="page">
         <h2>어디로 여행 가고 싶으신가요?</h2>
         <div id="map">
-            <img id="seoulMap" src="seoul_map_placeholder.png" alt="서울 지도">
+            <div id="seoulMap" style="border: 1px solid #ccc; padding: 100px; margin: 20px auto; width: 80%; background-color: #f9f9f9;">
+                <p>서울 지도가 들어갈 곳입니다 (클릭하세요)</p>
+            </div>
             <p>지도를 클릭하여 장소를 선택하세요.</p>
         </div>
     </div>
@@ -98,13 +101,13 @@
             document.getElementById(pageId).classList.add('active');
         }
 
-        // 1. 이미지 클릭 -> 지도 페이지
-        document.getElementById('mainImage').addEventListener('click', function() {
+        // 1. 시작 버튼 클릭 -> 지도 페이지
+        document.getElementById('startButton').addEventListener('click', function() {
             showPage('page2');
             initializeMap(); // 지도 초기화 (여기서는 서울 지도 이미지 클릭 이벤트)
         });
 
-        // 2. 지도 초기화 (예시 - 실제 지도 API 연동 필요)
+        // 2. 지도 초기화 (이미지 대신 div 클릭으로 대체)
         function initializeMap() {
             document.getElementById('seoulMap').addEventListener('click', function() {
                 location = '서울';
@@ -114,14 +117,13 @@
             });
         }
 
-        // 3. 날짜 드롭다운 채우기
+        // (이하 JavaScript 코드는 기존과 동일)
         function populateDateDropdowns() {
             const startMonthSelect = document.getElementById('startMonth');
             const startDaySelect = document.getElementById('startDay');
             const endMonthSelect = document.getElementById('endMonth');
             const endDaySelect = document.getElementById('endDay');
 
-            // 기존 옵션 제거 (이전 페이지에서 다시 왔을 경우)
             startMonthSelect.innerHTML = '';
             startDaySelect.innerHTML = '';
             endMonthSelect.innerHTML = '';
@@ -144,7 +146,6 @@
             }
         }
 
-        // 3. 날짜 선택 완료 -> 동행/인원 페이지
         function goToPage4() {
             const startMonth = document.getElementById('startMonth').value;
             const startDay = document.getElementById('startDay').value;
@@ -158,13 +159,11 @@
             showPage('page4');
         }
 
-        // 4. 누구와 함께? 선택
         function selectCompanion(type) {
             companion = type;
             alert('동행: ' + companion);
         }
 
-        // 4. 인원 및 선택 완료 -> 계획 유형 선택 페이지
         function goToPage5() {
             people = parseInt(document.getElementById('peopleCount').value);
             if (isNaN(people) || people < 1) {
@@ -175,33 +174,26 @@
             showPage('page5');
         }
 
-        // 5. 다 짜주길 원해요 -> PDF 저장 옵션 페이지
         function showPdfOption() {
             showPage('page6_pdf');
         }
 
-        // 5. 같이 짤래요 -> 챗봇 페이지
         function startChatbot() {
             showPage('page6_chat');
             initChatbot();
         }
 
-        // PDF 저장 (예시)
         function savePdf() {
             alert('PDF를 저장합니다! (실제 저장 기능은 백엔드 필요)');
-            // 실제 PDF 생성 및 저장 기능은 서버 측에서 구현해야 합니다.
-            // 여기서는 알림만 띄웁니다.
         }
 
-        // 챗봇 초기화 및 대화 시작
         function initChatbot() {
             const chatDisplay = document.getElementById('chatDisplay');
-            chatDisplay.innerHTML = ''; // 기존 대화 초기화
-            chatStep = 0; // 챗봇 단계 초기화
-            askQuestion(); // 첫 질문 시작
+            chatDisplay.innerHTML = '';
+            chatStep = 0;
+            askQuestion();
         }
 
-        // 챗봇 질문 및 답변 로직
         function askQuestion() {
             const chatDisplay = document.getElementById('chatDisplay');
             let botMessage = '';
@@ -219,17 +211,15 @@
             chatStep++;
         }
 
-        // 메시지 추가 함수
         function addMessage(text, type) {
             const chatDisplay = document.getElementById('chatDisplay');
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('chat-message', type);
             messageDiv.textContent = text;
             chatDisplay.appendChild(messageDiv);
-            chatDisplay.scrollTop = chatDisplay.scrollHeight; // 스크롤 하단으로
+            chatDisplay.scrollTop = chatDisplay.scrollHeight;
         }
 
-        // 챗봇 입력 및 전송
         document.getElementById('chatSendButton').addEventListener('click', sendMessage);
         document.getElementById('chatInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
@@ -244,21 +234,16 @@
             if (userText === '') return;
 
             addMessage(userText, 'user-message');
-            chatInput.value = ''; // 입력창 비우기
+            chatInput.value = '';
 
-            // 여기에 사용자 입력에 따른 챗봇 응답 로직 추가 (간단한 예시)
             setTimeout(() => {
-                if (chatStep <= 3) { // 챗봇 질문 3단계까지 진행
+                if (chatStep <= 3) {
                     askQuestion();
                 } else {
                     addMessage('알겠습니다. 입력하신 정보로 여행 계획을 세우는 데 참고하겠습니다!', 'bot-message');
                 }
-            }, 500); // 0.5초 후 답변
+            }, 500);
         }
-
-        // 초기 이미지 경로를 설정하세요.
-        // 예: document.getElementById('mainImage').src = 'https://example.com/your_travel_image.jpg';
-        // 예: document.getElementById('seoulMap').src = 'https://example.com/seoul_map_image.png';
     </script>
 
 </body>
